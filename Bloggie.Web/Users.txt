@@ -1,0 +1,10 @@
+﻿user1 
+{
+	user1@bloggie.com	
+	password = User1@123
+}
+user2
+{
+	email = user2@bloggie.com
+	password = Pass123$
+}
