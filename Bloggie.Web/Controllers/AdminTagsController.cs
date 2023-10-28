@@ -9,7 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Controllers
 {
-	public class AdminTagsController : Controller
+    [Authorize(Roles = "Admin")]
+    public class AdminTagsController : Controller
 	{
 		private readonly ITagRepository _tagRepository;
 		public AdminTagsController(ITagRepository tagRepository)
@@ -17,7 +18,7 @@ namespace Bloggie.Web.Controllers
 			_tagRepository = tagRepository;
 		}
 
-		[Authorize]
+		
 		public IActionResult Add()
 		{
 			return View();
