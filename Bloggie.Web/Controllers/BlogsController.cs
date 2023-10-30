@@ -30,27 +30,43 @@ namespace Bloggie.Web.Controllers
 		{
 			var liked = false;
 			var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
-            var blogPostLikeViewModel = new BlogDetailsViewModel();
+            var blogDetailsViewModel = new BlogDetailsViewModel();
 
-			if (signInManager.IsSignedIn(User))
-			{
-				var likesForBlog = await blogPostLikeRepository.GetLikesForBlog(blogPost.Id);
-
-				var userId = userManager.GetUserId(User);
-
-				if (userId != null)
-				{
-					var likeFromUser = likesForBlog.FirstOrDefault(x => 
-					x.UserId == Guid.Parse(userId));
-					liked = likeFromUser != null;
-				}
-			}
 
             if (blogPost != null)
 			{
 				var totalLikes = await blogPostLikeRepository.GetTotalLikes(blogPost.Id);
 
-                blogPostLikeViewModel = new BlogDetailsViewModel
+				if (signInManager.IsSignedIn(User))
+				{
+					var likesForBlog = await blogPostLikeRepository.GetLikesForBlog(blogPost.Id);
+
+					var userId = userManager.GetUserId(User);
+
+					if (userId != null)
+					{
+						var likeFromUser = likesForBlog.FirstOrDefault(x =>
+						x.UserId == Guid.Parse(userId));
+						liked = likeFromUser != null;
+					}
+				}
+
+				//Get comments for blog post
+				var blogCommentsDomainModel = await blogPostCommentRepository
+					.GetCommnetsByBlogIdAsync(blogPost.Id);
+
+				var blogCommentsForView = new List<BlogComment>();
+				foreach (var blogComment in blogCommentsDomainModel)
+				{
+					blogCommentsForView.Add(new BlogComment
+					{
+						Description = blogComment.Description,
+						DateAdded = blogComment.DateAdded,
+						UserName = (await userManager.FindByIdAsync(blogComment.UserId.ToString())).UserName,
+					});
+				}
+
+				blogDetailsViewModel = new BlogDetailsViewModel
                 {
                     Id = blogPost.Id,
                     Content = blogPost.Content,
@@ -64,11 +80,12 @@ namespace Bloggie.Web.Controllers
                     Visible = blogPost.Visible,
                     Tags = blogPost.Tags,
                     TotalLikes = totalLikes,
-					Liked = liked
+					Liked = liked,
+					Comments = blogCommentsForView
                 };
             }
 
-			return View(blogPostLikeViewModel);
+			return View(blogDetailsViewModel);
 		}
 
 		[HttpPost]

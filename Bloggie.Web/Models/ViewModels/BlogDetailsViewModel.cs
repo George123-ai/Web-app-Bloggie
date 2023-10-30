@@ -32,5 +32,8 @@ namespace Bloggie.Web.Models.ViewModels
 
         public string CommentDescription { get; set; }
 
+        public IEnumerable<BlogComment> Comments { get; set; }
+
+
     }
 }
