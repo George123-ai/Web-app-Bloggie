@@ -1,3 +1,4 @@
+using Bloggie.Web.Controllers;
 using Bloggie.Web.Data;
 using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -41,6 +42,7 @@ namespace Bloggie.Web
 			builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 			builder.Services.AddScoped<IImageRepository, CloudinaryImageRepository>();
 			builder.Services.AddScoped<IBlogPostLikeRepository, BLogPostLikeRepository>();
+			builder.Services.AddScoped<IBlogPostCommentRepository, BlogPostCommentRepository>();
 
 			var app = builder.Build();
 
