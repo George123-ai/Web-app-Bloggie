@@ -1,9 +1,11 @@
 ﻿using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bloggie.Web.Controllers
 {
+	[Authorize(Roles = "Admin")]
 	public class AdminUsersController : Controller
 	{
 		private readonly IUserRepository userRepository;
