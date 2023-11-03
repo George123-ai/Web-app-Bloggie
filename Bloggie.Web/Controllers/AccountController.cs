@@ -1,6 +1,7 @@
 ﻿using Bloggie.Web.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Bloggie.Web.Controllers
 {
@@ -25,26 +26,28 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel registerViewModel)
         {
-            var identityUser = new IdentityUser
+            if (ModelState.IsValid)
             {
-                UserName = registerViewModel.Username,
-                Email = registerViewModel.Email
-            };
+				var identityUser = new IdentityUser
+				{
+					UserName = registerViewModel.Username,
+					Email = registerViewModel.Email
+				};
 
-            var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
+				var identityResult = await userManager.CreateAsync(identityUser, registerViewModel.Password);
 
-            if (identityResult.Succeeded)
-            {
-                //asign this user the "User" role
-                var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
+				if (identityResult.Succeeded)
+				{
+					//asign this user the "User" role
+					var roleIdentityResult = await userManager.AddToRoleAsync(identityUser, "User");
 
-                if (roleIdentityResult.Succeeded)
-                {
-                    // show success notification
-                    return RedirectToAction("Register");
-                }
-            }
-
+					if (roleIdentityResult.Succeeded)
+					{
+						// show success notification
+						return RedirectToAction("Register");
+					}
+				}
+			}
 			//show error notification
 			return View();
 		}
