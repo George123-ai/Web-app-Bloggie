@@ -3,6 +3,7 @@ using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Controllers
 {
@@ -68,6 +69,24 @@ namespace Bloggie.Web.Controllers
 					{
 						return RedirectToAction("List", "AdminUsers");
 					}
+				}
+			}
+
+			return View();
+		}
+
+
+		[HttpPost]
+		public async Task<IActionResult> Delete(Guid id)
+		{
+			var user = await userManager.FindByIdAsync(id.ToString());
+
+			if (user is not null)
+			{
+				var identityResult = await userManager.DeleteAsync(user);
+				if (identityResult != null && identityResult.Succeeded)
+				{
+					return RedirectToAction("List", "AdminUsers");
 				}
 			}
 
